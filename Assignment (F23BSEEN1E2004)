@@ -1,0 +1,44 @@
+class BankAccount:
+    def _init_(self, balance=0):
+        self._balance = balance
+
+    @property
+    def balance(self):
+        return self._balance
+
+    @balance.setter
+    def balance(self, value):
+        if value < 0:
+            raise ValueError("Balance cannot be negative")
+        self._balance = value
+
+
+class User:
+    def withdraw(self, account, amount):
+        raise PermissionError("Nope! Withdrawals for admins only.")  # Clearer message
+
+
+class AdminUser(User):
+    def withdraw(self, account, amount):
+        if amount > account.balance:
+            raise ValueError("Insufficient funds. Try a smaller amount.")
+        account.balance -= amount
+
+
+# Create a bank account
+account = BankAccount(100)
+
+# Create an admin user
+admin = AdminUser()
+
+# Withdraw money using the admin user
+admin.withdraw(account, 50)
+
+print(account.balance)  # Output: 50
+
+# Try to withdraw money using a regular user
+regular = User()
+try:
+    regular.withdraw(account, 50)
+except PermissionError as e:
+    print(e)  # Output: Nope! Withdrawals for admins only.
